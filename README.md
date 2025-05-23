@@ -37,5 +37,5 @@ pip install pillow
 
 python -m pip install django-debug-toolbar
 
-
+python manage.py loaddata fixtures/product_data.json
 
