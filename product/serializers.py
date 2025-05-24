@@ -69,6 +69,14 @@ class ProductSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('price could not be nagative')
         return price
     
+    # ------object label validation -----------
+    # def create(self, validated_data):
+    #     product = Product(**validated_data)
+    #     product.other =1
+    #     product.save()
+    #     return product
+    
+    # ----------field validation ------------------
     # def validate(self, attrs):
     #     if attrs['password1'] != attrs['password2']:
     #         raise serializers.ValidationError("Password didn't match")

@@ -38,15 +38,30 @@ def view_products(request):
 
 
 
-@api_view()
+@api_view(['GET','PUT','DELETE'])
 def view_specific_products(request, id):
-    product = get_object_or_404(Product, pk=id)
+    if request.method =='GET':
+        product = get_object_or_404(Product, pk=id)
+        serializer = ProductSerializer(product)
+        return Response(serializer.data)
+    
+    if request.method == 'PUT':
+        product = get_object_or_404(Product, pk=id)
+        serializer = ProductSerializer(product, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+    if request.method =='DELETE':
+        product = get_object_or_404(Product, pk=id)
+        product.delete()
+        return Response(status = status.HTTP_204_NO_CONTENT)
 
+
+
+
+        
     #product_dict = {'id': product.id, 'name': product.name, 'price': product.price}
     #return Response(product_dict)
-
-    serializer = ProductSerializer(product)
-    return Response(serializer.data)
 
     # method 1-----------------
     # try:
