@@ -7,10 +7,31 @@ from product.models import Product, Category
 from product.serializers import ProductSerializer, CategorySerializer
 from django.db.models import Count
 from rest_framework.views import APIView
-
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView
+from rest_framework.viewsets import ModelViewSet
 
 # Create your views here.
+
+
+class ProductViewSet(ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        product  = self.get_object()
+        if product.stock > 10:
+            return Response({'message': 'product can not delete with stock'})
+        self.perform_destroy(product)
+        return Response(status = status.HTTP_204_NO_CONTENT)
+    
+
+
+class CategoryViewSet(ModelViewSet):
+    queryset = Category.objects.annotate(product_count=Count('products')).all()
+    serializer_class = CategorySerializer
+
+
+
 
 # -----------function base api view -----------------
 
@@ -65,6 +86,20 @@ class ProductList(ListCreateAPIView):
     # def get_serializer_context(self):
     #     return {'request': self.request}
 
+
+
+class ProductDetails(RetrieveUpdateDestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+    # method overriding--------
+
+    def delete(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
+        if product.stock > 10:
+            return Response({'message': 'product can not delete with stock'})
+        product.delete()
+        return Response(status = status.HTTP_204_NO_CONTENT)
 
 
 # function based 
@@ -141,7 +176,12 @@ class ViewCategories(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
 
+
+class CategoryDetails(RetrieveUpdateDestroyAPIView):
+    queryset = Category.objects.annotate(product_count=Count('products')).all()
+    serializer_class = CategorySerializer
 
 @api_view()
 def view_specific_category(request,pk):
