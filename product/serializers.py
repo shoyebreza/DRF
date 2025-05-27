@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from decimal import Decimal
-from product.models import Category , Product #, Review, ProductImage
+from product.models import Category , Product , Review #, ProductImage
 # from django.contrib.auth import get_user_model
 
 
@@ -80,3 +80,15 @@ class ProductSerializer(serializers.ModelSerializer):
     # def validate(self, attrs):
     #     if attrs['password1'] != attrs['password2']:
     #         raise serializers.ValidationError("Password didn't match")
+
+
+
+class ReviewSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['id', 'name', 'description']
+
+    def create(self, validated_data):
+        product_id = self.context['product_id']
+        review = Review.objects.create(product_id=product_id, **validated_data)
+        return review
