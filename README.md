@@ -39,3 +39,7 @@ python -m pip install django-debug-toolbar
 
 python manage.py loaddata fixtures/product_data.json
 
+drf-nested-routers
+
+pip install django-filter
+
