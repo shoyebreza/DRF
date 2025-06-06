@@ -43,3 +43,6 @@ drf-nested-routers
 
 pip install django-filter
 
+pip install -U djoser
+
+pip install -U djangorestframework_simplejwt
