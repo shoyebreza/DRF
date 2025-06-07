@@ -15,7 +15,8 @@ from rest_framework.filters import SearchFilter,OrderingFilter
 #from rest_framework.pagination import PageNumberPagination
 from product.paginations import DefaultPagination
 #from rest_framework.permissions import IsAdminUser, AllowAny
-from api.permissions import IsAdminOrReadOnly
+from api.permissions import IsAdminOrReadOnly, FullDjangoModelPermission
+from rest_framework.permissions import DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly
 
 # Create your views here.
 
@@ -31,6 +32,9 @@ class ProductViewSet(ModelViewSet):
     ordering_fields = ['price','updated_at']
     #permission_classes = [IsAdminUser]
     permission_classes = [IsAdminOrReadOnly]
+    #permission_classes = [DjangoModelPermissions]
+    #permission_classes = [FullDjangoModelPermission]
+    #permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
     #filterset_fields = ['category_id','price']
 
 
