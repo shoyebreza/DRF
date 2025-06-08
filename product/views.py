@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from product.models import Product, Category, Review
-from product.serializers import ProductSerializer, CategorySerializer, ReviewSerializers
+from product.serializers import ProductSerializer, CategorySerializer, ReviewSerializer, ReviewSerializers
 from django.db.models import Count
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView
@@ -17,6 +17,7 @@ from product.paginations import DefaultPagination
 #from rest_framework.permissions import IsAdminUser, AllowAny
 from api.permissions import IsAdminOrReadOnly, FullDjangoModelPermission
 from rest_framework.permissions import DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly
+from product.permissions import IsReviewAuthorOrReadonly
 
 # Create your views here.
 
@@ -245,13 +246,20 @@ class ViewSpecificCategory(APIView):
 
 
 
-class RewiewViewSet(ModelViewSet):
-    serializer_class = ReviewSerializers
+class ReviewViewSet(ModelViewSet):
+    serializer_class = ReviewSerializer
+    permission_classes = [IsReviewAuthorOrReadonly]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def get_queryset(self):
+        return Review.objects.filter(product_id=self.kwargs.get('product_pk'))
 
     def get_serializer_context(self):
-        return {'product_id': self.kwargs['product_pk']}
-    
-    def get_queryset(self):
-        return Review.objects.filter(product_id=self.kwargs['product_pk'])
+        return {'product_id': self.kwargs.get('product_pk')}
 
 
