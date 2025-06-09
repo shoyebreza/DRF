@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework.mixins import CreateModelMixin , RetrieveModelMixin, DestroyModelMixin
 from order.models import Cart, CartItem, Order, OrderItem
-from order.serializers import CartSerializer, CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer,OrderSerializer
-from rest_framework.permissions import IsAuthenticated
+from order.serializers import CartSerializer, CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer,OrderSerializer,UpdateOrderSerializer,CreateOrderSerializer
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 # Create your views here.
 
@@ -45,12 +45,25 @@ class CartItemViewSet(ModelViewSet):
 
 
 class OrderViewset(ModelViewSet):
-    serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
+    http_method_names = ['get', 'post', 'delete', 'patch', 'head', 'options']
+
+    def get_permissions(self):
+        if self.request.method in ['PATCH','DELETE']:
+            return [IsAdminUser()]
+        return [IsAuthenticated()]
+    
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return CreateOrderSerializer
+        elif self.request.method == 'PATCH':
+            return UpdateOrderSerializer
+        return OrderSerializer
+
+    def get_serializer_context(self):
+        return {'user_id': self.request.user.id, 'user': self.request.user.id}
 
     def get_queryset(self):
-        if getattr(self, 'swagger_fake_view', False):
-            return Order.objects.none()
         if self.request.user.is_staff:
             return Order.objects.prefetch_related('items__product').all()
         return Order.objects.prefetch_related('items__product').filter(user=self.request.user)
