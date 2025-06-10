@@ -52,7 +52,7 @@ class OrderViewset(ModelViewSet):
     http_method_names = ['get', 'post', 'delete', 'patch', 'head', 'options']
 
 
-    @action(detail=True, methods=['post'], permission_classes = [IsAuthenticated])
+    @action(detail=True, methods=['post'])
     def cancel(self, request, pk=None):
         order = self.get_object()
         OrderService.cancel_order(order=order, user=request.user)
@@ -68,16 +68,18 @@ class OrderViewset(ModelViewSet):
         return Response({'status': f'Order status updated to {request.data['status']}'})
 
     def get_permissions(self):
-        if self.request.method =='DELETE':
+        if self.action in ['update_status', 'destroy']:
             return [IsAdminUser()]
         return [IsAuthenticated()]
     
     def get_serializer_class(self):
-        if self.request.method == 'POST':
-            return CreateOrderSerializer
-        elif self.request.method == 'PATCH':
-            return UpdateOrderSerializer
-        return OrderSerializer
+        if self.action == 'cancel':
+            return orderSz.EmptySerializer
+        if self.action == 'create':
+            return orderSz.CreateOrderSerializer
+        elif self.action == 'update_status':
+            return orderSz.UpdateOrderSerializer
+        return orderSz.OrderSerializer
 
     def get_serializer_context(self):
         return {'user_id': self.request.user.id, 'user': self.request.user}
