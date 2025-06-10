@@ -3,7 +3,11 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework.mixins import CreateModelMixin , RetrieveModelMixin, DestroyModelMixin
 from order.models import Cart, CartItem, Order, OrderItem
 from order.serializers import CartSerializer, CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer,OrderSerializer,UpdateOrderSerializer,CreateOrderSerializer
+from order import serializers as orderSz
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.decorators import action
+from order.services import OrderService
+from rest_framework.response import Response
 
 # Create your views here.
 
@@ -45,8 +49,23 @@ class CartItemViewSet(ModelViewSet):
 
 
 class OrderViewset(ModelViewSet):
-    permission_classes = [IsAuthenticated]
     http_method_names = ['get', 'post', 'delete', 'patch', 'head', 'options']
+
+
+    @action(detail=True, methods=['post'], permission_classes = [IsAuthenticated])
+    def cancel(self, request, pk=None):
+        order = self.get_object()
+        OrderService.cancel_order(order=order, user=request.user)
+        return Response({'status': 'Order canceled'})
+
+    @action(detail=True, methods=['patch'])
+    def update_status(self, request, pk=None):
+        order = self.get_object()
+        serializer = orderSz.UpdateOrderSerializer(
+            order, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({'status': f'Order status updated to {request.data['status']}'})
 
     def get_permissions(self):
         if self.request.method =='DELETE':
