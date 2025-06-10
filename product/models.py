@@ -29,6 +29,17 @@ class Product(models.Model):
         return self.name
     
 
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(
+        upload_to="products/images/")
+    
+
+
+    
+
 class Review(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,

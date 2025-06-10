@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from product.models import Product, Category, Review
-from product.serializers import ProductSerializer, CategorySerializer, ReviewSerializer, ReviewSerializers
+from product.models import Product, Category, Review,ProductImage
+from product.serializers import ProductSerializer, CategorySerializer, ReviewSerializer, ReviewSerializers,ProductImageSerializer
 from django.db.models import Count
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView
@@ -52,12 +52,15 @@ class ProductViewSet(ModelViewSet):
     #         queryset = Product.objects.filter(category_id=category_id)
     #     return queryset
 
-    def destroy(self, request, *args, **kwargs):
-        product  = self.get_object()
-        if product.stock > 10:
-            return Response({'message': 'product can not delete with stock'})
-        self.perform_destroy(product)
-        return Response(status = status.HTTP_204_NO_CONTENT)
+
+class ProductImageViewSet(ModelViewSet):
+    serializer_class = ProductImageSerializer
+
+    def get_queryset(self):
+        return ProductImage.objects.filter(product_id=self.kwargs['product_pk'])
+
+    def perform_create(self, serializer):
+        serializer.save(product_id=self.kwargs['product_pk'])
     
 
 
