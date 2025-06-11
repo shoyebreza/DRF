@@ -82,9 +82,12 @@ class OrderViewset(ModelViewSet):
         return orderSz.OrderSerializer
 
     def get_serializer_context(self):
+        
         return {'user_id': self.request.user.id, 'user': self.request.user}
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Cart.objects.none()
         if self.request.user.is_staff:
             return Order.objects.prefetch_related('items__product').all()
         return Order.objects.prefetch_related('items__product').filter(user=self.request.user)
