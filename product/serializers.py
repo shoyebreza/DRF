@@ -14,11 +14,19 @@ class CategorySerializer(serializers.ModelSerializer):
     product_count =  serializers.IntegerField(read_only=True)
 
 
+
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
+        fields = ['id','image']
+
+
 class ProductSerializer(serializers.ModelSerializer):
+    images = ProductImageSerializer(many=True, read_only=True)
     class Meta:
         model = Product
 
-        fields = ['id','name','description','price','stock','category','price_with_tax']
+        fields = ['id','name','description','price','stock','category','price_with_tax','images']
 
     price_with_tax = serializers.SerializerMethodField(method_name='calculate_tax')
 
@@ -40,14 +48,6 @@ class ReviewSerializers(serializers.ModelSerializer):
         product_id = self.context['product_id']
         review = Review.objects.create(product_id=product_id, **validated_data)
         return review
-    
-
-class ProductImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductImage
-        fields = ['id','image']
-
-
 
 
 
