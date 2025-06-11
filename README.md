@@ -46,3 +46,9 @@ pip install django-filter
 pip install -U djoser
 
 pip install -U djangorestframework_simplejwt
+
+pip install -U drf-yasg
+
+https://drf-yasg.readthedocs.io/en/stable/index.html
+
+
