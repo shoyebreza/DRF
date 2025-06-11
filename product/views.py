@@ -18,6 +18,7 @@ from product.paginations import DefaultPagination
 from api.permissions import IsAdminOrReadOnly, FullDjangoModelPermission
 from rest_framework.permissions import DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly
 from product.permissions import IsReviewAuthorOrReadonly
+from drf_yasg.utils import swagger_auto_schema
 
 # Create your views here.
 
@@ -58,6 +59,12 @@ class ProductViewSet(ModelViewSet):
     #     if category_id is not None:
     #         queryset = Product.objects.filter(category_id=category_id)
     #     return queryset
+    @swagger_auto_schema(
+        operation_summary="create product by admin",
+        operation_description= " This is create product only allow admin",
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class ProductImageViewSet(ModelViewSet):
