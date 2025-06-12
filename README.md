@@ -21,7 +21,6 @@ Phimart is a robust ecommerce API built with Django REST Framework featuring JWT
 
 Interactive API documentation available at `/swagger/` and `/redoc/`
 
-![Swagger UI](https://i.imgur.com/H7hBZQa.png)
 
 ## Installation
 
