@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'drf_yasg',
     'django_filters',
+    'corsheaders',
     'djoser',
     'api',
     'product',
@@ -52,7 +53,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -80,6 +82,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'PhiMart.wsgi.application'
+
+
+
+CORS_ALLOWED_ORIGINS = [
+
+    'http://localhost:5174'
+
+]
 
 INTERNAL_IPS = [
     # ...
