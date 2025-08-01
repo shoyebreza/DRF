@@ -87,7 +87,7 @@ WSGI_APPLICATION = 'PhiMart.wsgi.application'
 
 CORS_ALLOWED_ORIGINS = [
 
-    'http://localhost:5174'
+    'http://localhost:5173'
 
 ]
 
@@ -101,23 +101,23 @@ INTERNAL_IPS = [
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('dbname'),
-        'USER': config('user'),
-        'PASSWORD': config('password'),
-        'HOST': config('host'),
-        'PORT': config('port')
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': config('dbname'),
+#        'USER': config('user'),
+#        'PASSWORD': config('password'),
+#        'HOST': config('host'),
+#        'PORT': config('port')
+#    }
+#}
 
 
 # Password validation
