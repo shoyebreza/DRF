@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from sslcommerz_lib import SSLCOMMERZ 
 from rest_framework.decorators import api_view
+from django.conf import settings as main_settings
 # Create your views here.
 
 
@@ -117,7 +118,7 @@ def initiate_payment(request):
     post_body['total_amount'] = amount
     post_body['currency'] = "BDT"
     post_body['tran_id'] = f"txn_{order_id}"
-    post_body['success_url'] = "http://localhost:5173/dashboard/payment/success/"
+    post_body['success_url'] = f"{main_settings.BACKEND_URL}/dashboard/payment/success/"
     post_body['fail_url'] = "http://localhost:5173/dashboard/payment/fail/"
     post_body['cancel_url'] = "http://localhost:5173/dashboard/orders/"
     post_body['emi_option'] = 0
@@ -139,3 +140,13 @@ def initiate_payment(request):
     if response.status.get("status") == 'SUCCESS':
         return Response({"payment_url": response['GatewayPageURL']})
     return Response({"error":"payment initiation failed"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+@api_view(['POST'])
+def payment_success(request):
+    
+    
+    
+    
+    
+    
